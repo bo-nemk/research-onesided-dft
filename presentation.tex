@@ -1,0 +1,279 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+%Information to be included in the title page:
+\title{One-sided DFTs and DFT Matrices for Real Sequences}
+\author{NEMK}
+\date{2023}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Why?}
+\begin{itemize}
+    \item In audio, we often use real sequences.
+    \item The two-sided DFT $X[k]$ of a length-$N$ real sequence $x[n]$ is conjugate symmetric:
+    \begin{equation}
+        X[m] = X^*[N - m] 
+    \end{equation}
+    \item Hence, it contains redundant information. 
+    \item Instead, \textbf{we can consider using one-sided DFTs}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conjugate Symmetry? Uneven Sequences I}
+\begin{itemize}
+    \item What does it mean for something to be conjugate symmetric?
+    \begin{equation*}
+        X[m] = X^*[N - m] 
+    \end{equation*}
+    \item Even example:
+        \begin{equation}
+        \textrm{FFT}\left(\begin{bmatrix}1 \\ 2 \\ 3 \\ 4 \\ 5 \end{bmatrix}\right) = 
+        \begin{bmatrix}
+           {\color{red}15} \\ {\color{blue}-2.5+3.44j} \\ {\color{blue}-2.5+0.81j} \\
+           {\color{blue}-2.5-0.81j} \\ {\color{blue}-2.5-3.44j}
+        \end{bmatrix}
+        \end{equation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conjugate Symmetry? Uneven Sequences II}
+\begin{itemize}
+    \item The corresponding real FFT is:
+        \begin{equation}
+        \textrm{RFFT}\left(\begin{bmatrix}1 \\ 2 \\ 3 \\ 4 \\ 5 \end{bmatrix}\right) = 
+        \begin{bmatrix}
+           {\color{red}15} \\ {\color{blue}-2.5+3.44j} \\ {\color{blue}-2.5+0.81j} 
+        \end{bmatrix}
+        \end{equation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conjugate Symmetry? Even Sequences I}
+\begin{itemize}
+    \item What does it mean for something to be conjugate symmetric?
+    \begin{equation*}
+        X[m] = X^*[N - m] 
+    \end{equation*}
+    \item Even example:
+        \begin{equation}
+        \textrm{FFT}\left(\begin{bmatrix}1 \\ 2 \\ 3 \\ 4 \\ 5 \\ 6 \end{bmatrix}\right) = 
+        \begin{bmatrix}
+           {\color{red}21} \\ {\color{blue}-3+5.2j} \\ {\color{blue}-3+1.73j} \\
+           {\color{green}-3} \\ {\color{blue}-3 -1.73j} \\ {\color{blue}-3 -5.2j}
+        \end{bmatrix}
+        \end{equation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conjugate Symmetry? Even Sequences II}
+\begin{itemize}
+    \item The corresponding real FFT is:
+        \begin{equation}
+        \textrm{RFFT}\left(\begin{bmatrix}1 \\ 2 \\ 3 \\ 4 \\ 5 \\ 6 \end{bmatrix}\right) = 
+        \begin{bmatrix}
+           {\color{red}21} \\ {\color{blue}-3+5.2j} \\ {\color{blue}-3+1.73j} \\
+           {\color{green}-3} 
+        \end{bmatrix}
+        \end{equation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{DFT matrices I}
+\begin{itemize}
+    \item In our algorithms, we often use DFT matrices. \\Let $\omega = \exp\left(-2\pi j / N\right)$
+    \begin{equation}
+        \mathbf{W}_6 = \frac{1}{\sqrt{N}}\begin{bmatrix}
+            {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0}\\
+            {\color{blue}\omega^0} & {\color{blue}\omega^1} & {\color{blue}\omega^2} & {\color{blue}\omega^3} & {\color{blue}\omega^4} & {\color{blue}\omega^5}\\
+            {\color{blue}\omega^0} & {\color{blue}\omega^2} & {\color{blue}\omega^4} & {\color{blue}\omega^6} & {\color{blue}\omega^8} & {\color{blue}\omega^{10}}\\
+            {\color{green}\omega^0} & {\color{green}\omega^3} & {\color{green}\omega^6} & {\color{green}\omega^9} &  {\color{green} \omega^{12}} & {\color{green} \omega^{15}}\\
+            {\color{blue}\omega^0} & {\color{blue}\omega^4} & {\color{blue}\omega^8} & {\color{blue}\omega^{12}} & {\color{blue}\omega^{16}} & {\color{blue}\omega^{20}}\\
+            {\color{blue}\omega^0} & {\color{blue}\omega^5} & {\color{blue}\omega^{10}}& {\color{blue} \omega^{15}} & {\color{blue}\omega^{20}} & {\color{blue}\omega^{25}}
+        \end{bmatrix}
+    \end{equation}
+    \item As we saw, only first 4 rows contain information; hence:
+    \begin{equation}
+        \mathbf{V}_6 = \frac{1}{\sqrt{N}}\begin{bmatrix}
+            {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0}\\
+            {\color{blue}\omega^0} & {\color{blue}\omega^1} & {\color{blue}\omega^2} & {\color{blue}\omega^3} & {\color{blue}\omega^4} & {\color{blue}\omega^5}\\
+            {\color{blue}\omega^0} & {\color{blue}\omega^2} & {\color{blue}\omega^4} & {\color{blue}\omega^6} & {\color{blue}\omega^8} & {\color{blue}\omega^{10}}\\
+            {\color{green}\omega^0} & {\color{green}\omega^3} & {\color{green}\omega^6} & {\color{green}\omega^9} &  {\color{green} \omega^{12}} & {\color{green} \omega^{15}}\\
+        \end{bmatrix}
+    \end{equation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{DFT matrices II}
+\begin{itemize}
+    \item As you can see, the real DFT matrix has a lower dimension:
+    \begin{equation}
+        \mathbf{V}_6 = \frac{1}{\sqrt{N}}\begin{bmatrix}
+            {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0} & {\color{red}\omega^0}\\
+            {\color{blue}\omega^0} & {\color{blue}\omega^1} & {\color{blue}\omega^2} & {\color{blue}\omega^3} & {\color{blue}\omega^4} & {\color{blue}\omega^5}\\
+            {\color{blue}\omega^0} & {\color{blue}\omega^2} & {\color{blue}\omega^4} & {\color{blue}\omega^6} & {\color{blue}\omega^8} & {\color{blue}\omega^{10}}\\
+            {\color{green}\omega^0} & {\color{green}\omega^3} & {\color{green}\omega^6} & {\color{green}\omega^9} &  {\color{green} \omega^{12}} & {\color{green} \omega^{15}}\\
+        \end{bmatrix}
+    \end{equation}
+    \item $(N \times N)$ to $(N / 2 + 1 \times N)$, yielding sped-up algorithms.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{IDFT matrices I}
+\begin{itemize}
+    \item Can we do the same for IDFT matrices?
+    \begin{equation}
+        \mathbf{W}^{-1}_6 = \frac{1}{\sqrt{N}}\begin{bmatrix}
+            \omega^0 & \omega^0 & \omega^0 & \omega^0 & \omega^0 & \omega^0\\
+            \omega^0 & \omega^{-1} & \omega^{-2} & \omega^{-3} & \omega^{-4} & \omega^{-5}\\
+            \omega^0 & \omega^{-2} & \omega^{-4} & \omega^{-6} & \omega^{-8} & \omega^{-10}\\
+            \omega^0 & \omega^{-3} & \omega^{-6} & \omega^{-9} & \omega^{-12} & \omega^{-15}\\
+            \omega^0 & \omega^{-4} & \omega^{-8} & \omega^{-12} & \omega^{-16} & \omega^{-20}\\
+            \omega^0 & \omega^{-5} & \omega^{-10} & \omega^{-15} & \omega^{-20} & \omega^{-25}
+        \end{bmatrix}
+    \end{equation}
+    \item Turns out, there's a problem…
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{IDFT matrices II}
+\begin{itemize}
+    \item Consider the one-sided DFT of our previous example:
+        \begin{equation}
+        \textrm{RFFT}\left(\begin{bmatrix}1 \\ 2 \\ 3 \\ 4 \\ 5 \\ 6 \end{bmatrix}\right) = 
+        \begin{bmatrix}
+           {\color{red}21} \\ {\color{blue}-3+5.2j} \\ {\color{blue}-3+1.73j} \\
+           {\color{green}-3} 
+        \end{bmatrix}
+        \end{equation}
+    \item We are looking for a matrix that transforms the ones-sided DFT back to the time-domain sequence.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{IDFT matrices III}
+\begin{itemize}
+    \item \textbf{Problem:} We need the conjugate of the blue terms to reconstruct the time domain sequence.
+    \item \textbf{Claim:} There is no \textit{general} way to represent taking the conjugate with a matrix.
+    \begin{itemize}
+        \item ... Feel free to disagree ;)
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{My Solution I}
+\begin{itemize}
+    \item I usually work with \textbf{optimization problems}. In general, these solvers don't work with imaginary numbers
+    \item Given some complex matrix $\mathbf{A}\in\mathbb{C}^{N\times M}$, I perform the following transformation to make the matrix real:
+    \begin{equation}
+        \tilde{\mathbf{A}} = \begin{bmatrix}
+            \mathrm{Re}\left\{\mathbf{A}\right\} & -\mathrm{Im}\left\{\mathbf{A}\right\} \\
+            \mathrm{Im}\left\{\mathbf{A}\right\} & \mathrm{Re}\left\{\mathbf{A}\right\} 
+        \end{bmatrix} 
+    \end{equation}
+    \item Similarly some complex vector $\mathbf{x}\in\mathbb{C}^{K}$:
+    \begin{equation}
+        \tilde{\mathbf{x}} = \begin{bmatrix}
+            \mathrm{Re}\left\{\mathbf{x}\right\}\\
+            \mathrm{Im}\left\{\mathbf{x}\right\}
+        \end{bmatrix} 
+    \end{equation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{My Solution II}
+\begin{itemize}
+    \item The real DFT matrix $\mathbf{V}_6$ introduced before is always applied to a real vector. Hence it can be expressed even more compactly:
+    \begin{equation}
+        \tilde{\mathbf{V}}_6 = \begin{bmatrix}
+            \mathrm{Re}\left\{\mathbf{V}_6\right\} \\
+            \mathrm{Im}\left\{\mathbf{V}_6\right\} 
+        \end{bmatrix} 
+    \end{equation}
+    \item What about the IDFT matrix, though?
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{My Solution III}
+\begin{itemize}
+    \item Consider the following multiplication between a special matrix and a vector in the new representation:
+    
+    \begin{align*}
+        \mathbf{x} &= \mathbf{S}\tilde{\mathbf{x}} \\
+        \hspace{-25pt}
+        \begin{bmatrix}
+            \mathrm{Re}\left\{x_0\right\} + j\mathrm{Im}\left\{x_0\right\} \\
+            \mathrm{Re}\left\{x_1\right\} + j\mathrm{Im}\left\{x_1\right\} \\
+            \mathrm{Re}\left\{x_2\right\} + j\mathrm{Im}\left\{x_2\right\} \\
+            \mathrm{Re}\left\{x_3\right\} + j\mathrm{Im}\left\{x_3\right\} \\
+            \mathrm{Re}\left\{x_2\right\} - j\mathrm{Im}\left\{x_2\right\} \\
+            \mathrm{Re}\left\{x_1\right\} - j\mathrm{Im}\left\{x_1\right\} 
+        \end{bmatrix}
+        &=
+        \begin{bmatrix}
+            1 & 0 & 0 & 0 & j & 0 & 0 & 0 \\ 
+            0 & 1 & 0 & 0 & 0 & j & 0 & 0 \\ 
+            0 & 0 & 1 & 0 & 0 & 0 & j & 0 \\ 
+            0 & 0 & 0 & 1 & 0 & 0 & 0 & j \\ 
+            0 & 0 & 1 & 0 & 0 & 0 & -j & 0 \\ 
+            0 & 1 & 0 & 0 & 0 & -j & 0 & 0  
+        \end{bmatrix}
+        \begin{bmatrix}
+            \mathrm{Re}\left\{x_0\right\} \\
+            \mathrm{Re}\left\{x_1\right\} \\
+            \mathrm{Re}\left\{x_2\right\} \\
+            \mathrm{Re}\left\{x_3\right\} \\
+            \mathrm{Im}\left\{x_0\right\} \\
+            \mathrm{Im}\left\{x_1\right\} \\
+            \mathrm{Im}\left\{x_2\right\} \\
+            \mathrm{Im}\left\{x_3\right\} 
+        \end{bmatrix}
+    \end{align*}
+    \item Hence, we can take $\tilde{\mathbf{V}}^{-1}_6 = \mathbf{W}^{-1}_6\mathbf{S}$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{My Solution IV}
+\begin{itemize}
+    \item So, what would $\tilde{\mathbf{V}}^{-1}_6 = \mathbf{W}^{-1}_6\mathbf{S}$ look like? 
+    \begin{equation*}
+	\scriptsize
+        \hspace{-35pt}
+        \begin{bmatrix}
+            \omega^0 & 2\omega^0 & 2 \omega^0 & \omega^0 & j\omega^0 & 0 & 0 & j\omega^0 \\
+            \omega^0 & \omega^{-1} + \omega^{-5} & \omega^{-2} + \omega^{-4} & \omega^{-3} & j\omega^0 & j\omega^{-1} - j\omega^{-5} &  j\omega^{-2} - j\omega^{-4} & j\omega^{-3} \\
+            \omega^0 & \omega^{-2} + \omega^{-10} & \omega^{-4} + \omega^{-8} & \omega^{-6} & j\omega^0 & j\omega^{-2} - j\omega^{-10} &  j\omega^{-4} - j\omega^{-8} & j\omega^{-6} \\
+            \omega^0 & \omega^{-3} + \omega^{-15} & \omega^{-6} + \omega^{-12} & \omega^{-9} & j\omega^0 & j\omega^{-3} - j\omega^{-15} &  j\omega^{-6} - j\omega^{-12} & j\omega^{-9} \\
+            \omega^0 & \omega^{-4} + \omega^{-20} & \omega^{-8} + \omega^{-16} & \omega^{-12} & j\omega^0 & j\omega^{-4} - j\omega^{-20} &  j\omega^{-8} - j\omega^{-16} & j\omega^{-12} \\
+            \omega^0 & \omega^{-5} + \omega^{-25} & \omega^{-10} + \omega^{-20} & \omega^{-15} & j\omega^0 & j\omega^{-5} - j\omega^{-25} &  j\omega^{-10} - j\omega^{-20} & j\omega^{-15} 
+        \end{bmatrix}
+    \end{equation*}
+    \item Which is actually real if we compute the exponentials and use the fact that $\mathrm{Im}\left\{x_0\right\} = \mathrm{Im}\left\{x_3\right\} = 0$:\\
+    \begin{equation*}
+	\centering
+        \begin{bmatrix}
+            1 & 2 & 2 & 1 & 0 & 0 & 0 & 0 \\
+            1 & 1 & -1 & -1 & 0 & -\sqrt{2} &  -\sqrt{2} & 0 \\
+            1 & -1 & -1 & -1 & 0 & -\sqrt{2} & \sqrt{2} & 0 \\
+            1 & -2 & 2 & -1 & 0 & 0 &  0 & 0 \\
+            1 & -1 & -1 & -1 & 0 & \sqrt{2} & -\sqrt{2} & 0 \\
+            1 & 1 & -1 & -1 & 0 & \sqrt{2} & \sqrt{2} & 0 
+        \end{bmatrix}
+    \end{equation*}
+\end{itemize}
+\end{frame}
+\end{document}
