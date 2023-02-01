@@ -22,8 +22,7 @@ def irfft_matrix(N):
                 np.fliplr(np.eye(M - 2)), np.zeros((M-2, 2)), np.fliplr(-1j * np.eye(M - 2)), np.zeros((M - 2, 1))]
         ])
 
-    print(np.imag(W@S))
-    return W @ S
+    return np.real(W @ S)
 
 if __name__ == "__main__":
     x = np.array([1,2,3,4,5,6])
@@ -35,4 +34,5 @@ if __name__ == "__main__":
     print(f"\n")
     print(f"real vector rfft x:\n{real_vector(np.fft.rfft(x))}")
     print(f"irfft_matrix x:\n{np.real(irfft_matrix(x.size) @ real_vector(np.fft.rfft(x)))}")
+    print(f"x:\n{x}")
 
