@@ -19,15 +19,15 @@ def irfft_matrix(N):
     S = np.bmat([
         [np.eye(M), 1j * np.eye(M)],
         [np.zeros((M - 2, 1)), \
-                np.fliplr(np.eye(M - 2)), np.zeros((M - 2, M - 2)), np.fliplr(-1j * np.eye(M - 2)), np.zeros((M - 2, 1))]
+                np.fliplr(np.eye(M - 2)), np.zeros((M-2, 2)), np.fliplr(-1j * np.eye(M - 2)), np.zeros((M - 2, 1))]
         ])
 
-    print(6 * np.real(W@S))
+    print(np.imag(W@S))
     return W @ S
-
 
 if __name__ == "__main__":
     x = np.array([1,2,3,4,5,6])
+    x = np.random.randn(1024)
 
     print(f"x:\n{x}")
     print(f"real vector rfft x:\n{real_vector(np.fft.rfft(x))}")
